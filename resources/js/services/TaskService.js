@@ -16,3 +16,20 @@ export const storeNewTask = async (data) => {
     }
   );
 };
+
+export const updateTask = async (id, data) => {
+  return await Axios.put(
+    `http://localhost:8200/myTask/api/tasks/${id}`,
+    data
+  ).then((res) => {
+    return res.data;
+  });
+};
+
+export const deleteTask = async (id) => {
+  return await Axios.delete(
+    `http://localhost:8200/myTask/api/tasks/${id}`
+  ).then((res) => {
+    return res.data;
+  });
+};

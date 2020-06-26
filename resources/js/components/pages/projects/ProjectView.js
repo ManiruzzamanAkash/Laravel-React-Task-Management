@@ -1,5 +1,13 @@
 import React from "react";
-import { Card, Button, Badge, Spinner } from "react-bootstrap";
+import {
+  Card,
+  Button,
+  Badge,
+  Spinner,
+  InputGroup,
+  FormControl,
+  Alert,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Axios from "axios";
 import { PUBLIC_URL } from "../../../constants";
@@ -11,10 +19,13 @@ class ProjectView extends React.Component {
   state = {
     project: {},
     taskList: [],
+    searchTaskList: [],
     isLoading: false,
 
     toggleAddTask: false,
     toggleEditProject: false,
+
+    searchText: "",
   };
 
   componentDidMount() {
@@ -29,6 +40,7 @@ class ProjectView extends React.Component {
     ).then((res) => {
       this.setState({
         taskList: res.data.data.tasks,
+        searchTaskList: res.data.data.tasks,
         project: res.data.data,
         isLoading: false,
       });
@@ -55,6 +67,7 @@ class ProjectView extends React.Component {
     tasks.unshift(task);
     this.setState({
       taskList: tasks,
+      searchTaskList: tasks,
     });
   };
 
@@ -67,6 +80,30 @@ class ProjectView extends React.Component {
     this.getProjectDetails();
   };
 
+  onSearchTasks = (e) => {
+    const searchText = e.target.value;
+    this.setState({
+      isLoading: true,
+    });
+    if (searchText.length > 0) {
+      const searchData = this.state.taskList.filter(function (item) {
+        const itemData = item.name + " " + item.description;
+        const textData = searchText.trim().toLowerCase();
+        return itemData.trim().toLowerCase().indexOf(textData) !== -1;
+      });
+      this.setState({
+        searchTaskList: searchData,
+        searchText: searchText,
+        isLoading: false,
+      });
+    } else {
+      this.setState({
+        searchText,
+      });
+      this.getProjectDetails();
+    }
+  };
+
   render() {
     return (
       <>
@@ -76,7 +113,9 @@ class ProjectView extends React.Component {
               <>
                 <h2>
                   {this.state.project.name}
-                  <Badge variant="primary">{this.state.taskList.length}</Badge>
+                  <Badge variant="primary">
+                    {this.state.searchTaskList.length}
+                  </Badge>
                 </h2>
                 <div>{this.state.project.description}</div>
               </>
@@ -89,6 +128,16 @@ class ProjectView extends React.Component {
                 />
               </>
             )}
+          </div>
+          <div className="float-left ml-5">
+            <InputGroup className="mb-3">
+              <FormControl
+                placeholder="Type Task to Search..."
+                aria-label="Type Task to Search..."
+                aria-describedby="basic-addon2"
+                onChange={(e) => this.onSearchTasks(e)}
+              />
+            </InputGroup>
           </div>
           <div className="float-right">
             <button
@@ -137,8 +186,14 @@ class ProjectView extends React.Component {
           </div>
         )}
 
+        {this.state.searchTaskList.length === 0 && (
+          <Alert variant={"warning"}>
+            No Task Found !! Please create one...
+          </Alert>
+        )}
+
         <TaskList
-          taskList={this.state.taskList}
+          taskList={this.state.searchTaskList}
           isDetailsView={true}
           onEditTask={this.onEditTask}
         />

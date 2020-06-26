@@ -85805,11 +85805,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+/* harmony import */ var _projects_ProjectList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./projects/ProjectList */ "./resources/js/components/pages/projects/ProjectList.js");
+
 
 
 
 function Home() {
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Container"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Home Page"));
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Container"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_projects_ProjectList__WEBPACK_IMPORTED_MODULE_2__["default"], null));
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (Home);
@@ -86323,7 +86325,9 @@ var ProjectList = /*#__PURE__*/function (_React$Component) {
 
     _defineProperty(_assertThisInitialized(_this), "state", {
       projectList: [],
-      isLoading: false
+      searchProjectList: [],
+      isLoading: false,
+      searchText: ""
     });
 
     _defineProperty(_assertThisInitialized(_this), "getProjectLists", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
@@ -86345,6 +86349,7 @@ var ProjectList = /*#__PURE__*/function (_React$Component) {
               if (response.success) {
                 _this.setState({
                   projectList: response.data,
+                  searchProjectList: response.data,
                   isLoading: false
                 });
               } else {
@@ -86393,6 +86398,34 @@ var ProjectList = /*#__PURE__*/function (_React$Component) {
       };
     }());
 
+    _defineProperty(_assertThisInitialized(_this), "onSearchProjects", function (e) {
+      var searchText = e.target.value;
+
+      _this.setState({
+        isLoading: true
+      });
+
+      if (searchText.length > 0) {
+        var searchData = _this.state.projectList.filter(function (item) {
+          var itemData = item.name + " " + item.description;
+          var textData = searchText.trim().toLowerCase();
+          return itemData.trim().toLowerCase().indexOf(textData) !== -1;
+        });
+
+        _this.setState({
+          searchProjectList: searchData,
+          searchText: searchText,
+          isLoading: false
+        });
+      } else {
+        _this.setState({
+          searchText: searchText
+        });
+
+        _this.getProjectLists();
+      }
+    });
+
     return _this;
   }
 
@@ -86412,7 +86445,18 @@ var ProjectList = /*#__PURE__*/function (_React$Component) {
         className: "float-left"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h2", null, "Project List", " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Badge"], {
         variant: "primary"
-      }, this.state.projectList.length))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      }, this.state.searchProjectList.length))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+        className: "float-left text-center ml-5"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["InputGroup"], {
+        className: "mb-3"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["FormControl"], {
+        placeholder: "Type Projects to Search...",
+        "aria-label": "Type Projects to Search...",
+        "aria-describedby": "basic-addon2",
+        onChange: function onChange(e) {
+          return _this2.onSearchProjects(e);
+        }
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
         className: "float-right"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
         to: "".concat(_constants__WEBPACK_IMPORTED_MODULE_5__["PUBLIC_URL"], "projects/create"),
@@ -86426,7 +86470,9 @@ var ProjectList = /*#__PURE__*/function (_React$Component) {
         role: "status"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
         className: "sr-only"
-      }, "Loading..."))), this.state.projectList.map(function (project, index) {
+      }, "Loading..."))), this.state.searchProjectList.length === 0 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Alert"], {
+        variant: "warning"
+      }, "No Projects Found !! Please create one..."), this.state.searchProjectList.map(function (project, index) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Card"], {
           key: index,
           className: "mt-3"
@@ -86524,9 +86570,11 @@ var ProjectView = /*#__PURE__*/function (_React$Component) {
     _defineProperty(_assertThisInitialized(_this), "state", {
       project: {},
       taskList: [],
+      searchTaskList: [],
       isLoading: false,
       toggleAddTask: false,
-      toggleEditProject: false
+      toggleEditProject: false,
+      searchText: ""
     });
 
     _defineProperty(_assertThisInitialized(_this), "getProjectDetails", function () {
@@ -86537,6 +86585,7 @@ var ProjectView = /*#__PURE__*/function (_React$Component) {
       axios__WEBPACK_IMPORTED_MODULE_3___default.a.get("http://localhost:8200/myTask/api/projects/".concat(_this.props.match.params.id)).then(function (res) {
         _this.setState({
           taskList: res.data.data.tasks,
+          searchTaskList: res.data.data.tasks,
           project: res.data.data,
           isLoading: false
         });
@@ -86564,7 +86613,8 @@ var ProjectView = /*#__PURE__*/function (_React$Component) {
       tasks.unshift(task);
 
       _this.setState({
-        taskList: tasks
+        taskList: tasks,
+        searchTaskList: tasks
       });
     });
 
@@ -86576,6 +86626,34 @@ var ProjectView = /*#__PURE__*/function (_React$Component) {
 
     _defineProperty(_assertThisInitialized(_this), "onEditTask", function () {
       _this.getProjectDetails();
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "onSearchTasks", function (e) {
+      var searchText = e.target.value;
+
+      _this.setState({
+        isLoading: true
+      });
+
+      if (searchText.length > 0) {
+        var searchData = _this.state.taskList.filter(function (item) {
+          var itemData = item.name + " " + item.description;
+          var textData = searchText.trim().toLowerCase();
+          return itemData.trim().toLowerCase().indexOf(textData) !== -1;
+        });
+
+        _this.setState({
+          searchTaskList: searchData,
+          searchText: searchText,
+          isLoading: false
+        });
+      } else {
+        _this.setState({
+          searchText: searchText
+        });
+
+        _this.getProjectDetails();
+      }
     });
 
     return _this;
@@ -86598,9 +86676,20 @@ var ProjectView = /*#__PURE__*/function (_React$Component) {
         className: "float-left"
       }, !this.state.toggleEditProject && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, this.state.project.name, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Badge"], {
         variant: "primary"
-      }, this.state.taskList.length)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.state.project.description)), this.state.toggleEditProject && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ProjectEdit__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      }, this.state.searchTaskList.length)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.state.project.description)), this.state.toggleEditProject && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ProjectEdit__WEBPACK_IMPORTED_MODULE_7__["default"], {
         project: this.state.project,
         onCompleteProjectEdit: this.onCompleteProjectEdit
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "float-left ml-5"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["InputGroup"], {
+        className: "mb-3"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["FormControl"], {
+        placeholder: "Type Task to Search...",
+        "aria-label": "Type Task to Search...",
+        "aria-describedby": "basic-addon2",
+        onChange: function onChange(e) {
+          return _this2.onSearchTasks(e);
+        }
       }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "float-right"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -86632,8 +86721,10 @@ var ProjectView = /*#__PURE__*/function (_React$Component) {
         role: "status"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "sr-only"
-      }, "Loading..."))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_tasks_TaskList__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        taskList: this.state.taskList,
+      }, "Loading..."))), this.state.searchTaskList.length === 0 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Alert"], {
+        variant: "warning"
+      }, "No Task Found !! Please create one..."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_tasks_TaskList__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        taskList: this.state.searchTaskList,
         isDetailsView: true,
         onEditTask: this.onEditTask
       }));

@@ -17,6 +17,9 @@ const Header = () => {
             <Link to={`${publicURL}`}>
               <Nav.Item className="text-white mr-2 ">Home</Nav.Item>
             </Link>
+            <Link to={`${publicURL}projects`}>
+              <Nav.Item className="text-white mr-2 ">Projects</Nav.Item>
+            </Link>
             <Link to={`${publicURL}about`}>
               <Nav.Item className="text-white mr-2 ">About</Nav.Item>
             </Link>

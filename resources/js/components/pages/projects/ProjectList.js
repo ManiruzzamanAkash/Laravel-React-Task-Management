@@ -3,6 +3,7 @@ import { Card, Button, Badge, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Axios from "axios";
 import { PUBLIC_URL } from "../../../constants";
+import TaskList from "../tasks/TaskList";
 
 class ProjectList extends React.Component {
   state = {
@@ -58,9 +59,13 @@ class ProjectList extends React.Component {
             </Card.Header>
             <Card.Body>
               <Card.Text>{project.description}</Card.Text>
-              <Button variant="primary" className="mr-2">
+              {/* <TaskList taskList={project.tasks} isDetailsView={false} /> */}
+              <Link
+                to={`${PUBLIC_URL}projects/view/${project.id}`}
+                className="btn btn-primary mr-2"
+              >
                 View
-              </Button>
+              </Link>
               <Button variant="success" className="mr-2">
                 Edit
               </Button>

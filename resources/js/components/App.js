@@ -1,46 +1,44 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Header from "./layouts/Header";
+import Footer from "./layouts/Footer";
+import { Container } from "react-bootstrap";
+
+// Pages
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+
 class App extends Component {
   state = {
-    counter: 0,
-  };
-
-  incrementCounter = (value) => {
-    let counter = this.state.counter + value;
-    this.setState({
-      counter,
-    });
-  };
-
-  decrementCounter = (value) => {
-    let counter = this.state.counter - value;
-    this.setState({
-      counter,
-    });
+    PUBLIC_URL: "/myTask/",
   };
 
   render() {
     return (
       <div>
-        <div className="container mt-5">
-          <h2>Count: {this.state.counter}</h2>
-          <p>
-            <button
-              className="btn btn-success btn-lg"
-              onClick={() => this.incrementCounter(10)}
-            >
-              +
-            </button>
+        <Router>
+          <Header />
+          <div>
+            <Container>
+              <Switch>
+                <Route path={`${this.state.PUBLIC_URL}about`}>
+                  <About />
+                </Route>
+                <Route path={`${this.state.PUBLIC_URL}contact`}>
+                  <Contact />
+                </Route>
+                <Route path={`${this.state.PUBLIC_URL}`}>
+                  <Home />
+                </Route>
+              </Switch>
 
-            <button
-              className="btn btn-danger btn-lg ml-2"
-              onClick={() => this.decrementCounter(5)}
-            >
-              -
-            </button>
-          </p>
-        </div>
+              <Footer />
+            </Container>
+          </div>
+        </Router>
       </div>
     );
   }

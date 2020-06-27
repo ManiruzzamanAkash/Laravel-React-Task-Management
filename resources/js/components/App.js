@@ -14,6 +14,7 @@ import ProjectList from "./pages/projects/ProjectList";
 import ProjectCreate from "./pages/projects/ProjectCreate";
 import ProjectView from "./pages/projects/ProjectView";
 import { PUBLIC_URL } from "../constants";
+import Register from "./pages/auth/Register";
 
 class App extends Component {
   render() {
@@ -49,6 +50,18 @@ class App extends Component {
                   path={`${PUBLIC_URL}projects`}
                   exact={true}
                   component={ProjectList}
+                />
+
+                <Route
+                  path={`${PUBLIC_URL}register`}
+                  exact={true}
+                  component={Register}
+                />
+
+                <Route
+                  path={`${PUBLIC_URL}login`}
+                  exact={true}
+                  component={Register}
                 />
                 <Route path={`${PUBLIC_URL}`} exact={true} component={Home} />
               </Switch>

@@ -15,13 +15,29 @@ import ProjectCreate from "./pages/projects/ProjectCreate";
 import ProjectView from "./pages/projects/ProjectView";
 import { PUBLIC_URL } from "../constants";
 import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
+import { checkIfAuthenticated } from "../services/AuthService";
+import AuthenticatedRoutes from "./AuthenticatedRoutes";
 
 class App extends Component {
+  state = {
+    user: {},
+    isLoggedIn: false,
+  };
+  componentDidMount() {
+    if (checkIfAuthenticated()) {
+      this.setState({
+        user: checkIfAuthenticated(),
+        isLoggedIn: true,
+      });
+    }
+  }
+
   render() {
     return (
       <div>
         <Router>
-          <Header />
+          <Header authData={this.state} />
           <div>
             <Container className="p-4">
               <Switch>
@@ -35,22 +51,27 @@ class App extends Component {
                   exact={true}
                   component={Contact}
                 />
-                <Route
+
+                {/* Private Authenticated Routes */}
+                <AuthenticatedRoutes
+                  authed={this.state.isLoggedIn}
                   path={`${PUBLIC_URL}projects/view/:id`}
-                  exact={true}
                   component={ProjectView}
                 />
-                <Route
+
+                <AuthenticatedRoutes
+                  authed={this.state.isLoggedIn}
                   path={`${PUBLIC_URL}projects/create`}
-                  exact={true}
                   component={ProjectCreate}
                 />
 
-                <Route
+                <AuthenticatedRoutes
+                  authed={this.state.isLoggedIn}
                   path={`${PUBLIC_URL}projects`}
-                  exact={true}
                   component={ProjectList}
                 />
+
+                {/* Private Authenticated Routes */}
 
                 <Route
                   path={`${PUBLIC_URL}register`}
@@ -61,7 +82,7 @@ class App extends Component {
                 <Route
                   path={`${PUBLIC_URL}login`}
                   exact={true}
-                  component={Register}
+                  component={Login}
                 />
                 <Route path={`${PUBLIC_URL}`} exact={true} component={Home} />
               </Switch>

@@ -20,3 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::apiResource('projects', 'API\ProjectsController');
 Route::apiResource('tasks', 'API\TasksController');
+
+Route::get('auth/create-token', 'API\Auth\AuthAPIController@createToken');
+
+Route::post('auth/login', 'API\Auth\AuthAPIController@login');
+Route::post('auth/register', 'API\Auth\AuthAPIController@register');
